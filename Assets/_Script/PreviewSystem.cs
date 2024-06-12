@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PreviewsSystem : MonoBehaviour
+public class PreviewSystem : MonoBehaviour
 {
     [SerializeField]
     private float previewYOffset = 0.06f;
@@ -14,4 +15,76 @@ public class PreviewsSystem : MonoBehaviour
     [SerializeField]
     private Material previewMaterialPrefab;
     private Material previewMaterialInstance;
+
+    private Renderer cellIndicatorRenderer;
+
+    private void Start()
+    {
+        previewMaterialInstance = new Material(previewMaterialPrefab);
+        cellIndicator.SetActive(false);
+        cellIndicatorRenderer = cellIndicator.GetComponentInChildren<Renderer>();
+    }
+
+    public void StartShowingPlacementPreview(GameObject prefab, Vector2Int size)
+    {
+        previewObject = Instantiate(prefab);
+        PreparePreview(previewObject);
+        PrepareCursor(size);
+        cellIndicator.SetActive(true);
+    }
+
+    private void PrepareCursor(Vector2Int size)
+    {
+        if (size.x > 0 || size.y > 0)
+        {
+            cellIndicator.transform.localScale = new Vector3(size.x, 1, size.y);
+            cellIndicatorRenderer.material.mainTextureScale = size;
+        }
+    }
+
+    private void PreparePreview(GameObject previewObject)
+    {
+        Renderer[] renders = previewObject.GetComponentsInChildren<Renderer>();
+
+        foreach (Renderer render in renders)
+        {
+            Material[] materials = render.materials;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i] = previewMaterialInstance;
+            }
+            render.materials = materials;
+        }
+    }
+
+    public void StopShowingPreview()
+    {
+        cellIndicator.SetActive(false);
+        Destroy(previewObject);
+    }
+
+    public void UpdatePreviewPosition(Vector3 position, bool validity)
+    {
+        MovePreview(position);
+        MoveCursor(position);
+        ApplyFeedback(validity);
+    }
+
+    private void ApplyFeedback(bool validity)
+    {
+        Color c = validity ? Color.white : Color.red;
+        c.a = 0.5f;
+        cellIndicatorRenderer.material.color = c;
+        previewMaterialInstance.color = c;
+    }
+
+    private void MoveCursor(Vector3 position)
+    {
+        cellIndicator.transform.position = position;
+    }
+
+    private void MovePreview(Vector3 position)
+    {
+        previewObject.transform.position = new Vector3(position.x, position.y + previewYOffset, position.z);
+    }
 }
