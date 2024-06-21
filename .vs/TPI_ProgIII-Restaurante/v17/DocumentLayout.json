@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\mazza\\OneDrive\\Escritorio\\bbbbbbbbbbbbb\\TPI_ProgIII-Restaurante\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3F08C0DB-E059-AE80-31F8-A49A2F655C23}|Assembly-CSharp.csproj|c:\\users\\mazza\\onedrive\\escritorio\\bbbbbbbbbbbbb\\tpi_progiii-restaurante\\assets\\_script\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3F08C0DB-E059-AE80-31F8-A49A2F655C23}|Assembly-CSharp.csproj|solutionrelative:assets\\_script\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Menu.cs",
+              "DocumentMoniker": "C:\\Users\\mazza\\OneDrive\\Escritorio\\bbbbbbbbbbbbb\\TPI_ProgIII-Restaurante\\Assets\\_Script\\Menu.cs",
+              "RelativeDocumentMoniker": "Assets\\_Script\\Menu.cs",
+              "ToolTip": "C:\\Users\\mazza\\OneDrive\\Escritorio\\bbbbbbbbbbbbb\\TPI_ProgIII-Restaurante\\Assets\\_Script\\Menu.cs",
+              "RelativeToolTip": "Assets\\_Script\\Menu.cs",
+              "ViewState": "AQIAABIAAAAAAAAAAAAowBYAAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-20T22:57:25.101Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

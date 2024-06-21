@@ -25,7 +25,7 @@ MonoBehaviour:
       type: 3}
   - <Name>k__BackingField: Big Bed
     <ID>k__BackingField: 2
-    <Size>k__BackingField: {x: 2, y: 2}
+    <Size>k__BackingField: {x: 1, y: 1}
     <Prefab>k__BackingField: {fileID: 3487007735555770654, guid: 4721f1b576334dc46b3c72470bf613e3,
       type: 3}
   - <Name>k__BackingField: Table
