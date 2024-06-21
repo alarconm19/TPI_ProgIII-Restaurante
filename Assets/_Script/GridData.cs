@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridData
+public class GridData : IDataPersistence
 {
-    Dictionary<Vector3Int, PlacementData> placedObjects = new();
+    public Dictionary<Vector3Int, PlacementData> placedObjects = new();
 
     public void AddObjectAt(Vector3Int gridPosition, Vector2Int objectSize, int id, int placedObjectIndex)
     {
@@ -62,8 +62,19 @@ public class GridData
             placedObjects.Remove(pos);
         }
     }
+
+    public void LoadData(GameData gridData)
+    {
+        placedObjects = gridData.placedObjects;
+    }
+
+    public void SaveData(ref GameData gridData)
+    {
+        gridData.placedObjects = (Vector3IntPlacementDataDictionary)placedObjects;
+    }
 }
 
+[Serializable]
 public class PlacementData
 {
     public List<Vector3Int> occupiedPositions;
