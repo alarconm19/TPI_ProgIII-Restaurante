@@ -1,22 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class GridData : IDataPersistence
+public class GridData
 {
-    public Dictionary<Vector3Int, PlacementData> placedObjects = new();
+    public Dictionary<Vector3Int, PlacementData> PlacedObjects = new();
 
     public void AddObjectAt(Vector3Int gridPosition, Vector2Int objectSize, int id, int placedObjectIndex)
     {
-        List<Vector3Int> positionToOccupy = CalculeOccupiedPositions(gridPosition, objectSize);
+        var positionToOccupy = CalculeOccupiedPositions(gridPosition, objectSize);
         PlacementData data = new(positionToOccupy, id, placedObjectIndex);
 
-        foreach (var pos in positionToOccupy)
+        foreach (var pos in positionToOccupy.Where(pos => !PlacedObjects.TryAdd(pos, data)))
         {
-            if (placedObjects.ContainsKey(pos))
-                throw new InvalidOperationException($"Position already occupied. {pos}");
-
-            placedObjects[pos] = data;
+            throw new InvalidOperationException($"Position already occupied. {pos}");
         }
     }
 
@@ -36,57 +34,46 @@ public class GridData : IDataPersistence
 
     public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int objectSize)
     {
-        List<Vector3Int> positionToOccupy = CalculeOccupiedPositions(gridPosition, objectSize);
+        var positionToOccupy = CalculeOccupiedPositions(gridPosition, objectSize);
 
-        foreach (var pos in positionToOccupy)
-        {
-            if (placedObjects.ContainsKey(pos))
-                return false;
-        }
-
-        return true;
+        return positionToOccupy.All(pos => !PlacedObjects.ContainsKey(pos));
     }
 
     internal int GetRepresentationIndex(Vector3Int gridPosition)
     {
-        if(placedObjects.ContainsKey(gridPosition) == false)
+        if(PlacedObjects.ContainsKey(gridPosition) == false)
             return -1;
 
-        return placedObjects[gridPosition].PlacedObjectIndex;
+        return PlacedObjects[gridPosition].PlacedObjectIndex;
     }
 
     internal void RemoveObjectAt(Vector3Int gridPosition)
     {
-        foreach (var pos in placedObjects[gridPosition].occupiedPositions)
+        foreach (var pos in PlacedObjects[gridPosition].OccupiedPositions)
         {
-            placedObjects.Remove(pos);
+            PlacedObjects.Remove(pos);
         }
-    }
-
-    public void LoadData(GameData gridData)
-    {
-        placedObjects = gridData.placedObjects;
-    }
-
-    public void SaveData(ref GameData gridData)
-    {
-        gridData.placedObjects = (Vector3IntPlacementDataDictionary)placedObjects;
     }
 }
 
 [Serializable]
 public class PlacementData
 {
-    public List<Vector3Int> occupiedPositions;
+    public List<Vector3Int> OccupiedPositions;
 
-    public int ID { get; private set; }
+    public int Id { get; private set; }
 
     public int PlacedObjectIndex { get; private set; }
 
     public PlacementData(List<Vector3Int> occupiedPositions, int id, int placedObjectIndex)
     {
-        this.occupiedPositions = occupiedPositions;
-        ID = id;
+        OccupiedPositions = occupiedPositions;
+        Id = id;
         PlacedObjectIndex = placedObjectIndex;
+    }
+
+    public override string ToString()
+    {
+        return $"ID: {Id}, PlacedObjectIndex: {PlacedObjectIndex} at {OccupiedPositions[0]}";
     }
 }
