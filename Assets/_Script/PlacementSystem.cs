@@ -29,8 +29,8 @@ public class PlacementSystem : MonoBehaviour
     private void Start()
     {
         StopPlacement();
-        floorData = new GridData();
-        furnitureData = new GridData();
+        floorData = new();
+        furnitureData = new();
     }
 
     public void StartPlacement(int ID)

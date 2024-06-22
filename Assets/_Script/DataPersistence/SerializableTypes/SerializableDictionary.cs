@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class SerializableDictionary<TPosition, TData> : Dictionary<TPosition, TData>, ISerializationCallbackReceiver
+public class SerializableDictionary<TKeys, TValues> : Dictionary<TKeys, TValues>, ISerializationCallbackReceiver
 {
     [SerializeField]
-    private List<TPosition> positions = new();
+    public List<TKeys> keys = new();
 
     [SerializeField]
-    private List<TData> datas = new();
+    public List<TValues> values = new();
 
     public void OnBeforeSerialize()
     {
-        positions.Clear();
-        datas.Clear();
+        keys.Clear();
+        values.Clear();
 
         foreach (var pair in this)
         {
-            positions.Add(pair.Key);
-            datas.Add(pair.Value);
+            keys.Add(pair.Key);
+            values.Add(pair.Value);
         }
     }
 
@@ -27,15 +27,25 @@ public class SerializableDictionary<TPosition, TData> : Dictionary<TPosition, TD
     {
         Clear();
 
-        if (positions.Count != datas.Count)
-            throw new System.Exception($"There are {positions.Count} positions and {datas.Count} datas after deserialization. Make sure that both key and value types are serializable.");
+        if (keys.Count != values.Count)
+            throw new Exception($"There are {keys.Count} positions and {values.Count} datas after deserialization. Make sure that both key and value types are serializable.");
 
-        for (int i = 0; i < positions.Count; i++)
+        for (int i = 0; i < keys.Count; i++)
         {
-            Add(positions[i], datas[i]);
+            Add(keys[i], values[i]);
         }
     }
 }
 
 [Serializable]
-public class Vector3IntPlacementDataDictionary : SerializableDictionary<Vector3Int, PlacementData> { }
+public class PlacedObjectData
+{
+    public string prefabName;
+    public Vector3 position;
+
+    public PlacedObjectData(string prefabName, Vector3 position)
+    {
+        this.prefabName = prefabName;
+        this.position = position;
+    }
+}
