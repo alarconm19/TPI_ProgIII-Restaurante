@@ -3,9 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class GridData
+[Serializable]
+public class GridData : ISerializationCallbackReceiver
 {
+    [NonSerialized]
     public Dictionary<Vector3Int, PlacementData> PlacedObjects = new();
+
+    [SerializeField]
+    private List<Vector3Int> placedObjectKeys = new();
+
+    [SerializeField]
+    private List<PlacementData> placedObjectValues = new();
 
     public void AddObjectAt(Vector3Int gridPosition, Vector2Int objectSize, int id, int placedObjectIndex)
     {
@@ -22,9 +30,9 @@ public class GridData
     {
         List<Vector3Int> returnVal = new();
 
-        for (int x = 0; x < objectSize.x; x++)
+        for (var x = 0; x < objectSize.x; x++)
         {
-            for (int y = 0; y < objectSize.y; y++)
+            for (var y = 0; y < objectSize.y; y++)
             {
                 returnVal.Add(gridPosition + new Vector3Int(x, 0, y));
             }
@@ -41,10 +49,10 @@ public class GridData
 
     internal int GetRepresentationIndex(Vector3Int gridPosition)
     {
-        if(PlacedObjects.ContainsKey(gridPosition) == false)
+        if(PlacedObjects.TryGetValue(gridPosition, out var o) == false)
             return -1;
 
-        return PlacedObjects[gridPosition].PlacedObjectIndex;
+        return o.PlacedObjectIndex;
     }
 
     internal void RemoveObjectAt(Vector3Int gridPosition)
@@ -52,6 +60,28 @@ public class GridData
         foreach (var pos in PlacedObjects[gridPosition].OccupiedPositions)
         {
             PlacedObjects.Remove(pos);
+        }
+    }
+
+    public void OnBeforeSerialize()
+    {
+        placedObjectKeys.Clear();
+        placedObjectValues.Clear();
+
+        foreach (var kvp in PlacedObjects)
+        {
+            placedObjectKeys.Add(kvp.Key);
+            placedObjectValues.Add(kvp.Value);
+        }
+    }
+
+    public void OnAfterDeserialize()
+    {
+        PlacedObjects = new Dictionary<Vector3Int, PlacementData>();
+
+        for (int i = 0; i < placedObjectKeys.Count; i++)
+        {
+            PlacedObjects.Add(placedObjectKeys[i], placedObjectValues[i]);
         }
     }
 }
@@ -70,10 +100,5 @@ public class PlacementData
         OccupiedPositions = occupiedPositions;
         Id = id;
         PlacedObjectIndex = placedObjectIndex;
-    }
-
-    public override string ToString()
-    {
-        return $"ID: {Id}, PlacedObjectIndex: {PlacedObjectIndex} at {OccupiedPositions[0]}";
     }
 }
