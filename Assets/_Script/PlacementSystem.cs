@@ -117,12 +117,11 @@ public class PlacementSystem : MonoBehaviour
             database = database.objectsData,
             floorData = floorData,
             furnitureData = furnitureData,
-            objectPlacer = objectPlacer.placedObjectDataList
+            objectPlacer = objectPlacer.placedObjectDataList,
         };
 
         return JsonUtility.ToJson(data, true);
     }
-
 
     public void FromJson(string json)
     {
@@ -132,8 +131,22 @@ public class PlacementSystem : MonoBehaviour
         database.objectsData = data.database;
         floorData = data.floorData;
         furnitureData = data.furnitureData;
-        objectPlacer.placedObjectDataList = data.objectPlacer;
-        objectPlacer.LoadPlacedObjects();
+        //objectPlacer.placedObjectDataList = data.objectPlacer;
+        //objectPlacer.LoadPlacedObjects();
+
+        foreach (var pos in floorData.PlacedObjects.Keys)
+        {
+            objectPlacer.PlaceObject(database.objectsData[0].Prefab, grid.CellToWorld(pos));
+        }
+
+        foreach (var pos in furnitureData.PlacedObjects.Keys)
+        {
+            var index = furnitureData.GetRepresentationIndex(pos);
+            objectPlacer.PlaceObject(database.objectsData[index].Prefab, grid.CellToWorld(pos));
+        }
+
+
+        Debug.Log("Data loaded successfully.");
     }
 
     // Clase para contener los datos serializables de PlacementSystem
@@ -142,12 +155,12 @@ public class PlacementSystem : MonoBehaviour
     {
         public Vector3 lastPosition;
         public List<ObjectData> database;
-        public GridData floorData;
-        public GridData furnitureData;
+        public GridData floorData, furnitureData;
         public List<PlacedObjectData> objectPlacer;
 
         public PlacementSystemData()
         {
+            lastPosition = Vector3.zero;
             database = new();
             floorData = new();
             furnitureData = new();

@@ -59,6 +59,11 @@ public class ObjectPlacer : MonoBehaviour
             PlaceObjectV1(prefab, placedObjectData.position);
         }
     }
+
+    public List<PlacedObjectData> GetPlacedObjects()
+    {
+        return placedObjectDataList;
+    }
 }
 
 // Clase para contener los datos serializables de los objetos colocados

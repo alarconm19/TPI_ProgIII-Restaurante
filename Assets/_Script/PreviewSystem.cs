@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PreviewSystem : MonoBehaviour
@@ -5,15 +6,13 @@ public class PreviewSystem : MonoBehaviour
     //[SerializeField]
     //private float previewYOffset = 0.06f;
 
-    [SerializeField]
-    private GameObject cellIndicator;
-    private GameObject previewObject;
+    public GameObject cellIndicator;
+    public GameObject previewObject;
 
-    [SerializeField]
-    private Material previewMaterialPrefab;
-    private Material previewMaterialInstance;
+    public Material previewMaterialPrefab;
+    public Material previewMaterialInstance;
 
-    private Renderer cellIndicatorRenderer;
+    public Renderer cellIndicatorRenderer;
 
     private void Start()
     {
@@ -107,4 +106,13 @@ public class PreviewSystem : MonoBehaviour
         ApplyFeedbackToCursor(false);
 
     }
+}
+
+[Serializable]
+public class PreviewSystemData
+{
+    public Vector3 cellIndicatorPosition;
+    public Vector3 previewObjectPosition;
+    public Color previewMaterialColor;
+    public Color cellIndicatorColor;
 }
