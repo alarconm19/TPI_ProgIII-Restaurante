@@ -17,7 +17,8 @@ public class MozosManager : MonoBehaviour
     }
 }
 
-public class Mozo {
+public class Mozo
+{
     public string name;
     public List<int> mesas;
 }
