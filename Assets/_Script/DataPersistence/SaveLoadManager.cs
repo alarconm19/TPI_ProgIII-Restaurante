@@ -4,44 +4,38 @@ using UnityEngine;
 
 public class SaveLoadManager : MonoBehaviour
 {
-    public ObjectPlacer objectPlacer;
+    public PlacementSystem placementSystem;
 
     private void Start()
     {
-        // Asigna el objectPlacer si no está asignado desde el editor
-        if (objectPlacer == null)
+        // Asigna el placementSystem si no está asignado desde el editor
+        if (placementSystem == null)
         {
-            objectPlacer = FindObjectOfType<ObjectPlacer>();
-            if (objectPlacer == null)
+            placementSystem = FindObjectOfType<PlacementSystem>();
+            if (placementSystem == null)
             {
-                Debug.LogError("ObjectPlacer component not found in the scene.");
+                Debug.LogError("placementSystem component not found in the scene.");
                 return;
             }
         }
-        LoadGame();
-    }
-
-    private void OnApplicationQuit()
-    {
-        SaveGame();
+        // LoadGame();
     }
 
     public void SaveGame()
     {
-        if (objectPlacer == null)
+        if (placementSystem == null)
         {
-            Debug.LogError("ObjectPlacer is not assigned.");
+            Debug.LogError("PlacementSystem is not assigned.");
             return;
         }
 
-        var fullPath = Path.Combine(Application.persistentDataPath, "data.game");
+        var fullPath = Path.Combine(Application.persistentDataPath, "data.json");
 
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
 
-            string json = objectPlacer.ToJson();
-            Debug.Log("Saving data: " + json);
+            string json = placementSystem.ToJson();
 
             using FileStream stream = new(fullPath, FileMode.Create);
             using StreamWriter writer = new(stream);
@@ -56,13 +50,13 @@ public class SaveLoadManager : MonoBehaviour
 
     public void LoadGame()
     {
-        if (objectPlacer == null)
+        if (placementSystem == null)
         {
-            Debug.LogError("ObjectPlacer is not assigned.");
+            Debug.LogError("PlacementSystem is not assigned.");
             return;
         }
 
-        var fullPath = Path.Combine(Application.persistentDataPath, "data.game");
+        var fullPath = Path.Combine(Application.persistentDataPath, "data.json");
 
         if (!File.Exists(fullPath)) return;
         try
@@ -72,7 +66,7 @@ public class SaveLoadManager : MonoBehaviour
 
             string json = reader.ReadToEnd();
 
-            objectPlacer.FromJson(json);
+            placementSystem.FromJson(json);
         }
         catch (Exception e)
         {

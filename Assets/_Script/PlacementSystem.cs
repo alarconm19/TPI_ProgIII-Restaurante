@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
@@ -104,6 +106,65 @@ public class PlacementSystem : MonoBehaviour
         {
             buildingState.UpdateState(gridPosition);
             lastDetectedPosition = gridPosition;
+        }
+    }
+
+    public string ToJson()
+    {
+        var data = new PlacementSystemData
+        {
+            lastPosition = inputManager.GetLastPosition(),
+            database = database.objectsData,
+            floorData = floorData,
+            furnitureData = furnitureData,
+            objectPlacer = objectPlacer.placedObjectDataList,
+        };
+
+        return JsonUtility.ToJson(data, true);
+    }
+
+    public void FromJson(string json)
+    {
+        var data = JsonUtility.FromJson<PlacementSystemData>(json);
+
+        inputManager.SetLastPosition(data.lastPosition);
+        database.objectsData = data.database;
+        floorData = data.floorData;
+        furnitureData = data.furnitureData;
+        //objectPlacer.placedObjectDataList = data.objectPlacer;
+        //objectPlacer.LoadPlacedObjects();
+
+        foreach (var pos in floorData.PlacedObjects.Keys)
+        {
+            objectPlacer.PlaceObject(database.objectsData[0].Prefab, grid.CellToWorld(pos));
+        }
+
+        foreach (var pos in furnitureData.PlacedObjects.Keys)
+        {
+            var index = furnitureData.GetRepresentationIndex(pos);
+            objectPlacer.PlaceObject(database.objectsData[index].Prefab, grid.CellToWorld(pos));
+        }
+
+
+        Debug.Log("Data loaded successfully.");
+    }
+
+    // Clase para contener los datos serializables de PlacementSystem
+    [Serializable]
+    private class PlacementSystemData
+    {
+        public Vector3 lastPosition;
+        public List<ObjectData> database;
+        public GridData floorData, furnitureData;
+        public List<PlacedObjectData> objectPlacer;
+
+        public PlacementSystemData()
+        {
+            lastPosition = Vector3.zero;
+            database = new();
+            floorData = new();
+            furnitureData = new();
+            objectPlacer = new();
         }
     }
 }

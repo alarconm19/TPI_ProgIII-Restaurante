@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[Serializable]
 public class ObjectPlacer : MonoBehaviour
 {
-    [SerializeField]
-    private List<GameObject> placedGameObjects = new();
+    [NonSerialized]
+    public List<GameObject> placedGameObjects = new();
 
     // Lista de datos serializables
-    private List<PlacedObjectData> placedObjectDataList = new();
-
+    public List<PlacedObjectData> placedObjectDataList = new();
 
     public int PlaceObject(GameObject prefab, Vector3 position)
     {
@@ -23,6 +24,15 @@ public class ObjectPlacer : MonoBehaviour
         return placedGameObjects.Count - 1;
     }
 
+    public int PlaceObjectV1(GameObject prefab, Vector3 position)
+    {
+        GameObject newObject = Instantiate(prefab);
+        newObject.transform.position = position;
+        placedGameObjects.Add(newObject);
+
+        return placedGameObjects.Count - 1;
+    }
+
     internal void RemoveObjectAt(int gameObjectIndex)
     {
         if (placedGameObjects.Count <= gameObjectIndex || placedGameObjects[gameObjectIndex] == null)
@@ -32,50 +42,40 @@ public class ObjectPlacer : MonoBehaviour
         placedGameObjects[gameObjectIndex] = null;
 
         // También remover los datos
-        placedObjectDataList.RemoveAt(gameObjectIndex);
+        placedObjectDataList[gameObjectIndex] = null;
     }
 
-    // Método para convertir los datos a JSON
-    public string ToJson()
+    public void LoadPlacedObjects()
     {
-        Debug.Log("Saving " + placedObjectDataList.Count + " objects");
-        return JsonUtility.ToJson(new PlacedObjectDataListWrapper { placedObjectData = placedObjectDataList }, true);
-    }
-
-    // Método para cargar los datos desde JSON
-    public void FromJson(string json)
-    {
-        PlacedObjectDataListWrapper wrapper = JsonUtility.FromJson<PlacedObjectDataListWrapper>(json);
-        placedObjectDataList = wrapper.placedObjectData;
-
-        // Limpiar los objetos existentes antes de recrear
-        foreach (var go in placedGameObjects)
+        foreach (var placedObjectData in placedObjectDataList)
         {
-            if (go != null)
-                Destroy(go);
-        }
-        placedGameObjects.Clear();
+            GameObject prefab = Resources.Load<GameObject>(placedObjectData.prefabName);
+            if (prefab == null)
+            {
+                Debug.LogError("Prefab not found: " + placedObjectData.prefabName);
+                continue;
+            }
 
-        // Recrear los objetos colocados desde los datos cargados
-        foreach (var data in placedObjectDataList)
-        {
-            GameObject prefab = Resources.Load<GameObject>(data.prefabName);
-            if (prefab != null)
-            {
-                GameObject newObject = Instantiate(prefab);
-                newObject.transform.position = data.position;
-                placedGameObjects.Add(newObject);
-            }
-            else
-            {
-                Debug.LogError("Could not find prefab: " + data.prefabName);
-            }
+            PlaceObjectV1(prefab, placedObjectData.position);
         }
     }
 
-    [Serializable]
-    private class PlacedObjectDataListWrapper
+    public List<PlacedObjectData> GetPlacedObjects()
     {
-        public List<PlacedObjectData> placedObjectData;
+        return placedObjectDataList;
+    }
+}
+
+// Clase para contener los datos serializables de los objetos colocados
+[Serializable]
+public class PlacedObjectData
+{
+    public string prefabName;
+    public Vector3 position;
+
+    public PlacedObjectData(string prefabName, Vector3 position)
+    {
+        this.prefabName = prefabName;
+        this.position = position;
     }
 }

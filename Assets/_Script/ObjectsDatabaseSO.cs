@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,5 +22,4 @@ public class ObjectData
 
     [field: SerializeField]
     public GameObject Prefab { get; private set; }
-
 }

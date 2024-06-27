@@ -1,15 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RemovingState : IBuildingState
 {
     private int gameObjectIndex = -1;
-    Grid grid;
-    PreviewSystem previewSystem;
-    GridData floorData, furnitureData;
-    ObjectPlacer objectPlacer;
+    readonly Grid grid;
+    readonly PreviewSystem previewSystem;
+    private readonly GridData floorData, furnitureData;
+    readonly ObjectPlacer objectPlacer;
 
     public RemovingState(Grid grid, PreviewSystem previewSystem, GridData floorData, GridData furnitureData, ObjectPlacer objectPlacer)
     {

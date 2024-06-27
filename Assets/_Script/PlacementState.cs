@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class PlacementState : IBuildingState
 {
-    private int selectedObjectIndex = -1;
-    int ID;
-    Grid grid;
-    PreviewSystem previewSystem;
-    ObjectsDatabaseSO database;
-    GridData floorData, furnitureData;
-    ObjectPlacer objectPlacer;
+    private readonly int selectedObjectIndex = -1;
+    readonly int ID;
+    readonly Grid grid;
+    readonly PreviewSystem previewSystem;
+    readonly ObjectsDatabaseSO database;
+    private readonly GridData floorData, furnitureData;
+    readonly ObjectPlacer objectPlacer;
 
     public PlacementState(int ID, Grid grid, PreviewSystem previewSystem, ObjectsDatabaseSO database, GridData floorData, GridData furnitureData, ObjectPlacer objectPlacer)
     {

@@ -37,4 +37,14 @@ public class InputManager : MonoBehaviour
         return lastposition;
     }
 
+    public Vector3 GetLastPosition()
+    {
+        return lastposition;
+    }
+
+    public void SetLastPosition(Vector3 position)
+    {
+        lastposition = position;
+    }
+
 }
